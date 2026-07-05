@@ -20,6 +20,9 @@ const DEFAULT_SETTINGS = {
   lowStockThreshold: 5,
   currency: 'INR',
   businessName: 'My Kirana Store',
+  ownerName: '',
+  phone: '',
+  address: '',
 }
 
 export function AppProvider({ children }) {
@@ -79,9 +82,12 @@ export function AppProvider({ children }) {
 
     // Reduce stock
     sale.items.forEach((item) => {
-      updateProduct(item.productId, {
-        stock: products.find((p) => p.id === item.productId)?.stock - item.quantity,
-      })
+      const product = products.find((p) => p.id === item.productId)
+      if (product) {
+        updateProduct(item.productId, {
+          stock: product.stock - item.quantity,
+        })
+      }
     })
   }
 
@@ -90,9 +96,12 @@ export function AppProvider({ children }) {
     if (sale) {
       // Restore stock
       sale.items.forEach((item) => {
-        updateProduct(item.productId, {
-          stock: products.find((p) => p.id === item.productId)?.stock + item.quantity,
-        })
+        const product = products.find((p) => p.id === item.productId)
+        if (product) {
+          updateProduct(item.productId, {
+            stock: product.stock + item.quantity,
+          })
+        }
       })
       setSales(sales.filter((s) => s.id !== id))
     }

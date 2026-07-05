@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
-import Header from '../components/Header'
 import { formatMoney } from '../utils/format'
 
 export default function Sales() {
-  const { products, cart, addToCart, updateCartQty, removeFromCart, checkout, settings, currencies } = useApp()
+  const { products, addSale, settings, currencies } = useApp()
+  const [cart, setCart] = useState([])
   const [search, setSearch] = useState('')
   const [showCheckout, setShowCheckout] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState('Cash')
@@ -18,33 +18,71 @@ export default function Sales() {
     p.name.toLowerCase().includes(search.toLowerCase()) && p.stock > 0
   )
 
+  const addToCart = (product) => {
+    const existing = cart.find((i) => i.productId === product.id)
+    if (existing) {
+      if (existing.qty < product.stock) {
+        setCart(cart.map((i) => (i.productId === product.id ? { ...i, qty: i.qty + 1 } : i)))
+      }
+    } else {
+      setCart([...cart, { productId: product.id, name: product.name, price: product.sellPrice, qty: 1 }])
+    }
+  }
+
+  const updateCartQty = (productId, qty) => {
+    if (qty <= 0) {
+      removeFromCart(productId)
+    } else {
+      const product = products.find((p) => p.id === productId)
+      if (product && qty <= product.stock) {
+        setCart(cart.map((i) => (i.productId === productId ? { ...i, qty } : i)))
+      }
+    }
+  }
+
+  const removeFromCart = (productId) => {
+    setCart(cart.filter((i) => i.productId !== productId))
+  }
+
   const cartTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0)
   const discountVal = Number(discount) || 0
   const finalTotal = Math.max(0, cartTotal - discountVal)
 
   const handleCheckout = () => {
-    const sale = checkout({ paymentMethod, customerName, discount: discountVal })
-    if (sale) {
-      setLastReceipt(sale)
-      setShowCheckout(false)
-      setCustomerName('')
-      setDiscount('')
+    if (cart.length === 0) return
+    const items = cart.map((i) => ({
+      productId: i.productId,
+      name: i.name,
+      quantity: i.qty,
+      price: i.price,
+    }))
+    const sale = {
+      items,
+      total: finalTotal,
+      paymentMethod,
+      customerName: customerName || 'Walk-in',
+      discount: discountVal,
     }
+    addSale(sale)
+    setLastReceipt({ ...sale })
+    setCart([])
+    setShowCheckout(false)
+    setCustomerName('')
+    setDiscount('')
   }
 
   if (lastReceipt) {
     return (
-      <div className="pb-24">
-        <Header title="Sale complete" />
+      <div className="pb-6">
         <div className="p-4">
           <div className="bg-white border border-stone-200 rounded-xl p-4">
             <p className="text-center text-forest-600 text-3xl mb-2">✓</p>
             <p className="text-center text-stone-500 text-sm mb-4">Sale recorded successfully</p>
             <div className="divide-y divide-stone-100">
-              {lastReceipt.items.map((i) => (
-                <div key={i.productId} className="py-2 flex justify-between text-sm">
-                  <span>{i.name} × {i.qty}</span>
-                  <span>{fmt(i.price * i.qty)}</span>
+              {lastReceipt.items.map((i, idx) => (
+                <div key={idx} className="py-2 flex justify-between text-sm">
+                  <span>{i.name} × {i.quantity}</span>
+                  <span>{fmt(i.price * i.quantity)}</span>
                 </div>
               ))}
             </div>
@@ -66,7 +104,6 @@ export default function Sales() {
 
   return (
     <div className="pb-40">
-      <Header title="Sell" />
       <div className="p-4 space-y-3">
         <input
           value={search}
@@ -80,7 +117,7 @@ export default function Sales() {
             <button
               key={p.id}
               onClick={() => addToCart(p)}
-              className="bg-white border border-stone-200 rounded-xl p-3 text-left active:bg-forest-50"
+              className="bg-white border border-stone-200 rounded-xl p-3 text-left active:bg-forest-50 hover:border-forest-300"
             >
               <p className="font-medium text-sm text-stone-800 truncate">{p.name}</p>
               <p className="text-xs text-stone-400">{p.stock} {p.unit} left</p>
@@ -94,15 +131,15 @@ export default function Sales() {
       </div>
 
       {cart.length > 0 && (
-        <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-stone-200 shadow-lg max-h-[45vh] flex flex-col z-30">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 shadow-lg max-h-[45vh] flex flex-col z-30 max-w-lg mx-auto">
           <div className="overflow-y-auto px-4 pt-3 space-y-2">
             {cart.map((i) => (
               <div key={i.productId} className="flex items-center justify-between text-sm">
                 <span className="flex-1 truncate">{i.name}</span>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => updateCartQty(i.productId, i.qty - 1)} className="w-6 h-6 rounded-full border border-stone-300 text-stone-600">−</button>
+                  <button onClick={() => updateCartQty(i.productId, i.qty - 1)} className="w-6 h-6 rounded-full border border-stone-300 text-stone-600 text-sm">−</button>
                   <span className="w-6 text-center">{i.qty}</span>
-                  <button onClick={() => updateCartQty(i.productId, i.qty + 1)} className="w-6 h-6 rounded-full border border-stone-300 text-stone-600">+</button>
+                  <button onClick={() => updateCartQty(i.productId, i.qty + 1)} className="w-6 h-6 rounded-full border border-stone-300 text-stone-600 text-sm">+</button>
                   <span className="w-16 text-right font-medium">{fmt(i.price * i.qty)}</span>
                   <button onClick={() => removeFromCart(i.productId)} className="text-red-400 text-xs">✕</button>
                 </div>
@@ -126,7 +163,7 @@ export default function Sales() {
 
       {showCheckout && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end">
-          <div className="bg-white w-full rounded-t-2xl p-4 space-y-3">
+          <div className="bg-white w-full rounded-t-2xl p-4 space-y-3 max-w-lg mx-auto">
             <p className="font-semibold text-stone-700">Checkout</p>
             <input
               placeholder="Customer name (optional)"

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import { useApp } from '../context/AppContext'
-import Header from '../components/Header'
 import { formatMoney } from '../utils/format'
 
 function startOfToday() {
@@ -33,8 +32,7 @@ export default function Dashboard() {
   const fmt = (v) => formatMoney(v, settings.currency, currencies)
 
   return (
-    <div className="pb-24">
-      <Header title="Dashboard" />
+    <div className="pb-6">
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <StatCard label="Today's Sales" value={fmt(stats.todayRevenue)} accent="forest" />

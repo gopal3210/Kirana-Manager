@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { AppProvider } from './context/AppContext'
-import Nav from './components/Nav'
+import Header from './components/Header'
 import Dashboard from './pages/Dashboard'
 import Stock from './pages/Stock'
 import Sales from './pages/Sales'
@@ -24,8 +24,10 @@ export default function App() {
   return (
     <AppProvider>
       <div className="min-h-screen bg-stone-50 max-w-lg mx-auto relative">
-        <Page />
-        <Nav active={tab} onChange={setTab} />
+        <Header active={tab} onChange={setTab} title={tab.charAt(0).toUpperCase() + tab.slice(1)} />
+        <div className="pt-0">
+          <Page />
+        </div>
       </div>
     </AppProvider>
   )
