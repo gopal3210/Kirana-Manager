@@ -73,8 +73,12 @@ export function AppProvider({ children }) {
   // Save to localStorage whenever data changes
   useEffect(() => {
     if (initialized) {
-      const data = { products, sales, expenses, settings }
-      localStorage.setItem('kirana-data', JSON.stringify(data))
+      try {
+        const data = { products, sales, expenses, settings }
+        localStorage.setItem('kirana-data', JSON.stringify(data))
+      } catch (e) {
+        console.error('Failed to save data:', e)
+      }
     }
   }, [products, sales, expenses, settings, initialized])
 
@@ -103,33 +107,32 @@ export function AppProvider({ children }) {
       ...sale,
       timestamp: new Date().getTime(),
     }
-    setSales([...sales, newSale])
+    setSales((prev) => [...prev, newSale])
 
-    // Reduce stock
-    sale.items.forEach((item) => {
-      const product = products.find((p) => p.id === item.productId)
-      if (product) {
-        updateProduct(item.productId, {
-          stock: product.stock - item.quantity,
-        })
-      }
-    })
+    // Reduce stock in a single transactional pass to avoid stale-closure overwrites
+    setProducts((prev) =>
+      prev.map((p) => {
+        const item = sale.items.find((i) => i.productId === p.id)
+        if (!item) return p
+        return { ...p, stock: Math.max(0, p.stock - item.quantity) }
+      })
+    )
   }
 
   const deleteSale = (id) => {
-    const sale = sales.find((s) => s.id === id)
-    if (sale) {
-      // Restore stock
-      sale.items.forEach((item) => {
-        const product = products.find((p) => p.id === item.productId)
-        if (product) {
-          updateProduct(item.productId, {
-            stock: product.stock + item.quantity,
-          })
-        }
-      })
-      setSales(sales.filter((s) => s.id !== id))
-    }
+    setSales((prev) => {
+      const sale = prev.find((s) => s.id === id)
+      if (!sale) return prev
+      // Restore stock in a single pass
+      setProducts((prevProducts) =>
+        prevProducts.map((p) => {
+          const item = sale.items.find((i) => i.productId === p.id)
+          if (!item) return p
+          return { ...p, stock: p.stock + item.quantity }
+        })
+      )
+      return prev.filter((s) => s.id !== id)
+    })
   }
 
   // Expenses operations

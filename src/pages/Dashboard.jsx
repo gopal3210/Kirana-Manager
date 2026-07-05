@@ -29,7 +29,7 @@ export default function Dashboard() {
     return {
       todayRevenue,
       todayExpenseTotal,
-      todayProfit,
+      todayProfit: totalProfit,
       todayOrders: todaySales.length,
       lowStock,
       totalStockValue,

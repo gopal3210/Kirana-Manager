@@ -16,8 +16,15 @@ export default function Sales() {
 
   // Load favorites from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('favorites')
-    if (saved) setFavorites(JSON.parse(saved))
+    try {
+      const saved = localStorage.getItem('favorites')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) setFavorites(parsed)
+      }
+    } catch (e) {
+      console.error('Failed to load favorites:', e)
+    }
   }, [])
 
   const fmt = (v) => formatMoney(v, settings.currency, currencies)
