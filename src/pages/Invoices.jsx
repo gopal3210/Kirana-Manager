@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
-import Header from '../components/Header'
 import { formatMoney, formatDate } from '../utils/format'
 
 export default function Invoices() {
@@ -10,8 +9,7 @@ export default function Invoices() {
   const fmt = (v) => formatMoney(v, settings.currency, currencies)
 
   return (
-    <div className="pb-24">
-      <Header title="Invoice History" />
+    <div className="pb-6">
       <div className="p-4 space-y-2">
         {sales.length === 0 && <p className="text-sm text-stone-400 text-center py-8">No sales recorded yet.</p>}
         {sales.map((s) => (
@@ -32,8 +30,8 @@ export default function Invoices() {
               <div className="border-t border-stone-100 p-3 space-y-1">
                 {s.items.map((i) => (
                   <div key={i.productId} className="flex justify-between text-sm text-stone-600">
-                    <span>{i.name} × {i.qty}</span>
-                    <span>{fmt(i.price * i.qty)}</span>
+                    <span>{i.name} × {i.quantity}</span>
+                    <span>{fmt(i.price * i.quantity)}</span>
                   </div>
                 ))}
                 {s.discount > 0 && (

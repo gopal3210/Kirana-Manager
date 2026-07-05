@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
-import Header from '../components/Header'
 import { formatMoney, formatDate } from '../utils/format'
 
 const CATEGORIES = ['Rent', 'Electricity', 'Transport', 'Salary', 'Maintenance', 'Supplies', 'Other']
@@ -26,8 +25,7 @@ export default function Expenses() {
   }
 
   return (
-    <div className="pb-24">
-      <Header title="Expenses" />
+    <div className="pb-6">
       <div className="p-4 space-y-3">
         <div className="bg-white border border-stone-200 rounded-xl p-4 flex items-center justify-between">
           <div>

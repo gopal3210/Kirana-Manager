@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
-import { formatMoney } from '../utils/format'
+import { formatMoney }
+from '../utils/format'
 
 export default function Sales() {
   const { products, addSale, settings, currencies } = useApp()
@@ -179,7 +180,7 @@ export default function Sales() {
               className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
             />
             <div className="flex gap-2">
-              {['Cash', 'UPI', 'Card', 'Credit'].map((m) => (
+              {['Cash', 'Card', 'Credit'].map((m) => (
                 <button
                   key={m}
                   onClick={() => setPaymentMethod(m)}
