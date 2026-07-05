@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
-import Header from '../components/Header'
 import { formatMoney } from '../utils/format'
 
 const EMPTY_FORM = { name: '', category: '', unit: 'pc', stock: '', costPrice: '', sellPrice: '' }
@@ -52,8 +51,7 @@ export default function Stock() {
   }
 
   return (
-    <div className="pb-24">
-      <Header title="Stock" />
+    <div className="pb-6">
       <div className="p-4 space-y-3">
         <div className="flex gap-2">
           <input
@@ -114,17 +112,19 @@ export default function Stock() {
             <p className="text-sm text-stone-400 text-center py-8">No products yet. Tap + Add to create one.</p>
           )}
           {filtered.map((p) => (
-            <div key={p.id} className="bg-white border border-stone-200 rounded-xl p-3 flex items-center justify-between">
-              <div>
-                <p className="font-medium text-stone-800">{p.name}</p>
-                <p className="text-xs text-stone-400">{p.category || 'Uncategorized'} · {fmt(p.sellPrice)}/{p.unit}</p>
-                <p className={`text-xs font-semibold ${p.stock <= (settings.lowStockThreshold ?? 5) ? 'text-amber-600' : 'text-forest-600'}`}>
-                  Stock: {p.stock} {p.unit}
-                </p>
+            <div key={p.id} className="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
+              <div className="flex-1">
+                <p className="font-medium text-stone-800 text-sm">{p.name}</p>
+                <p className="text-xs text-stone-400">{p.category || 'Uncategorized'}</p>
+                <div className="flex gap-3 mt-1 text-xs">
+                  <span className="text-stone-600">Stock: <span className={`font-semibold ${p.stock <= (settings.lowStockThreshold ?? 5) ? 'text-amber-600' : 'text-forest-600'}`}>{p.stock} {p.unit}</span></span>
+                  <span className="text-stone-600">Cost: <span className="font-semibold text-stone-700">{fmt(p.costPrice)}</span></span>
+                  <span className="text-stone-600">Sell: <span className="font-semibold text-forest-700">{fmt(p.sellPrice)}</span></span>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => startEdit(p)} className="text-xs px-2 py-1 rounded-lg border border-stone-300 text-stone-600">Edit</button>
-                <button onClick={() => deleteProduct(p.id)} className="text-xs px-2 py-1 rounded-lg border border-red-200 text-red-500">Del</button>
+              <div className="flex gap-1">
+                <button onClick={() => startEdit(p)} className="text-xs px-2 py-1 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-50">Edit</button>
+                <button onClick={() => deleteProduct(p.id)} className="text-xs px-2 py-1 rounded-lg border border-red-200 text-red-500 hover:bg-red-50">Del</button>
               </div>
             </div>
           ))}

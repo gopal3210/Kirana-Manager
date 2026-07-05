@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
-import { formatMoney }
-from '../utils/format'
+import { formatMoney } from '../utils/format'
 
 export default function Sales() {
   const { products, addSale, settings, currencies } = useApp()
@@ -113,20 +112,27 @@ export default function Sales() {
           className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
         />
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-2">
           {filtered.map((p) => (
             <button
               key={p.id}
               onClick={() => addToCart(p)}
-              className="bg-white border border-stone-200 rounded-xl p-3 text-left active:bg-forest-50 hover:border-forest-300"
+              className="w-full bg-white border border-stone-200 rounded-lg p-3 text-left active:bg-forest-50 hover:border-forest-300 transition"
             >
-              <p className="font-medium text-sm text-stone-800 truncate">{p.name}</p>
-              <p className="text-xs text-stone-400">{p.stock} {p.unit} left</p>
-              <p className="text-sm font-bold text-forest-700 mt-1">{fmt(p.sellPrice)}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="font-medium text-sm text-stone-800">{p.name}</p>
+                  <p className="text-xs text-stone-400">{p.category || 'Uncategorized'} · {p.stock} {p.unit} available</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-forest-700">{fmt(p.sellPrice)}</p>
+                  <p className="text-xs text-stone-400">per {p.unit}</p>
+                </div>
+              </div>
             </button>
           ))}
           {filtered.length === 0 && (
-            <p className="col-span-2 text-sm text-stone-400 text-center py-8">No matching in-stock products.</p>
+            <p className="text-sm text-stone-400 text-center py-8">No matching in-stock products.</p>
           )}
         </div>
       </div>
@@ -135,22 +141,22 @@ export default function Sales() {
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 shadow-lg max-h-[45vh] flex flex-col z-30 max-w-lg mx-auto">
           <div className="overflow-y-auto px-4 pt-3 space-y-2">
             {cart.map((i) => (
-              <div key={i.productId} className="flex items-center justify-between text-sm">
-                <span className="flex-1 truncate">{i.name}</span>
+              <div key={i.productId} className="flex items-center justify-between text-sm bg-stone-50 p-2 rounded-lg">
+                <span className="flex-1 truncate font-medium">{i.name}</span>
                 <div className="flex items-center gap-2">
                   <button onClick={() => updateCartQty(i.productId, i.qty - 1)} className="w-6 h-6 rounded-full border border-stone-300 text-stone-600 text-sm">−</button>
-                  <span className="w-6 text-center">{i.qty}</span>
+                  <span className="w-6 text-center font-semibold">{i.qty}</span>
                   <button onClick={() => updateCartQty(i.productId, i.qty + 1)} className="w-6 h-6 rounded-full border border-stone-300 text-stone-600 text-sm">+</button>
-                  <span className="w-16 text-right font-medium">{fmt(i.price * i.qty)}</span>
+                  <span className="w-16 text-right font-bold text-forest-700">{fmt(i.price * i.qty)}</span>
                   <button onClick={() => removeFromCart(i.productId)} className="text-red-400 text-xs">✕</button>
                 </div>
               </div>
             ))}
           </div>
-          <div className="px-4 py-3 border-t border-stone-100 flex items-center justify-between">
+          <div className="px-4 py-3 border-t border-stone-100 flex items-center justify-between bg-stone-50">
             <div>
               <p className="text-xs text-stone-400">Total</p>
-              <p className="font-bold text-forest-700">{fmt(cartTotal)}</p>
+              <p className="font-bold text-forest-700 text-lg">{fmt(cartTotal)}</p>
             </div>
             <button
               onClick={() => setShowCheckout(true)}
