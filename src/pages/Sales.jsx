@@ -279,7 +279,7 @@ export default function Sales() {
       {/* Checkout Modal */}
       {showCheckout && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end">
-          <div className="bg-white w-full rounded-t-2xl p-4 space-y-3 max-w-lg mx-auto animate-slideup">
+          <div className="bg-white w-full rounded-t-2xl p-4 space-y-3 max-w-lg mx-auto">
             <p className="font-bold text-lg text-stone-800">Complete Sale</p>
             <input
               placeholder="Customer name (optional)"
