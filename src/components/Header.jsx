@@ -14,7 +14,7 @@ export default function Header({ title, active, onChange }) {
   const { settings } = useApp()
   
   return (
-    <header className="sticky top-0 z-30 bg-forest-700 text-white px-4 pt-3 pb-1 shadow-sm">
+    <header className="sticky top-0 z-30 bg-forest-700 text-white px-4 pb-1 shadow-sm" style={{ paddingTop: 'calc(0.75rem + env(safe-area-inset-top))' }}>
       <div className="flex items-center justify-between mb-2">
         <div>
           <p className="text-[10px] uppercase tracking-wide text-forest-200">{settings.businessName || 'Kirana Manager'}</p>

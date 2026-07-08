@@ -8,6 +8,13 @@
 
 body {
   overscroll-behavior-y: contain;
+  /* Push content above phone navigation bar */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Utility: bottom padding that accounts for phone nav bar */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }
 
 ::-webkit-scrollbar {
