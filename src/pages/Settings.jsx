@@ -69,8 +69,30 @@ export default function Settings() {
           <p className="text-xs text-stone-400 mt-2">You'll be notified when stock falls below this number.</p>
         </Section>
 
-        <div className="text-center text-xs text-stone-400 pt-4 pb-4">
-          <p>Kirana Manager</p>
+        <div className="bg-white border border-stone-200 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-stone-700">Legal</p>
+          <a
+            href="/privacy.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between py-2 border-b border-stone-100"
+          >
+            <span className="text-sm text-stone-700">🔒 Privacy Policy</span>
+            <span className="text-stone-400 text-xs">Open →</span>
+          </a>
+          <a
+            href="/terms.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between py-2"
+          >
+            <span className="text-sm text-stone-700">📄 Terms of Service</span>
+            <span className="text-stone-400 text-xs">Open →</span>
+          </a>
+        </div>
+
+        <div className="text-center text-xs text-stone-400 pb-4">
+          <p>Kirana Manager · Pi Network Ecosystem</p>
           <p>All data stored locally on this device</p>
         </div>
       </div>
